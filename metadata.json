@@ -1,0 +1,6 @@
+{
+  "name": "하루핏 HARUFIT - 스마트 할 일 및 일정 관리",
+  "description": "오늘의 할 일에 딱 맞는 하루. 스마트 우선순위 알고리즘과 타임블록 자동 배치를 지원하는 올인원 생산성 플랫폼 하루핏(HARUFIT).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

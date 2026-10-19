@@ -1,0 +1,135 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with display name and account information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 50, "minLength": 1 },
+        "photoURL": { "type": "string", "maxLength": 1024 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "displayName"]
+    },
+    "TaskItem": {
+      "title": "TaskItem",
+      "description": "User specific task item",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 200, "minLength": 1 },
+        "desc": { "type": "string", "maxLength": 1000 },
+        "category": { "type": "string", "maxLength": 50 },
+        "priority": { "type": "string", "enum": ["VERY_HIGH", "HIGH", "MEDIUM", "LOW"] },
+        "due": { "type": "string", "maxLength": 100 },
+        "dueLabel": { "type": "string", "maxLength": 100 },
+        "duration": { "type": "number" },
+        "repeat": { "type": "string", "maxLength": 50 },
+        "status": { "type": "string", "enum": ["UPCOMING", "IN_PROGRESS", "OVERDUE", "COMPLETED"] },
+        "score": { "type": "number" },
+        "reason": { "type": "string", "maxLength": 200 }
+      },
+      "required": ["userId", "title", "category", "priority", "status"]
+    },
+    "CompletedTaskItem": {
+      "title": "CompletedTaskItem",
+      "description": "User completed task record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 200 },
+        "desc": { "type": "string", "maxLength": 1000 },
+        "category": { "type": "string", "maxLength": 50 },
+        "completedAt": { "type": "string", "maxLength": 100 },
+        "originalTaskId": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["userId", "title"]
+    },
+    "FocusSessionItem": {
+      "title": "FocusSessionItem",
+      "description": "User focus session history item",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "timeRange": { "type": "string", "maxLength": 100 },
+        "durationMinutes": { "type": "number" },
+        "taskTitle": { "type": "string", "maxLength": 200 },
+        "category": { "type": "string", "maxLength": 50 },
+        "status": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["userId", "taskTitle", "durationMinutes"]
+    },
+    "ScheduleBlockItem": {
+      "title": "ScheduleBlockItem",
+      "description": "User timeline schedule block",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "time": { "type": "string", "maxLength": 20 },
+        "timeRange": { "type": "string", "maxLength": 100 },
+        "durationMinutes": { "type": "number" },
+        "title": { "type": "string", "maxLength": 200 },
+        "desc": { "type": "string", "maxLength": 1000 },
+        "type": { "type": "string", "maxLength": 50 },
+        "category": { "type": "string", "maxLength": 50 },
+        "score": { "type": "number" },
+        "isLocked": { "type": "boolean" },
+        "isNext": { "type": "boolean" },
+        "isDone": { "type": "boolean" },
+        "dueNotice": { "type": "string", "maxLength": 100 },
+        "tag": { "type": "string", "maxLength": 100 },
+        "icon": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["userId", "title", "time"]
+    },
+    "UserSettings": {
+      "title": "UserSettings",
+      "description": "User preferences and algorithm weights",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "categories": { "type": "array" },
+        "priorityWeight": { "type": "number" },
+        "deadlineWeight": { "type": "number" },
+        "durationWeight": { "type": "number" },
+        "penaltyWeight": { "type": "number" },
+        "defaultSessionDuration": { "type": "string", "maxLength": 10 },
+        "defaultRestDuration": { "type": "string", "maxLength": 10 }
+      },
+      "required": ["userId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "UserProfile" },
+      "description": "User account profile and display name"
+    },
+    "/users/{userId}/tasks/{taskId}": {
+      "schema": { "$ref": "TaskItem" },
+      "description": "User specific task items"
+    },
+    "/users/{userId}/completedTasks/{compTaskId}": {
+      "schema": { "$ref": "CompletedTaskItem" },
+      "description": "User completed task records"
+    },
+    "/users/{userId}/focusSessions/{sessionId}": {
+      "schema": { "$ref": "FocusSessionItem" },
+      "description": "User focus session records"
+    },
+    "/users/{userId}/scheduleBlocks/{blockId}": {
+      "schema": { "$ref": "ScheduleBlockItem" },
+      "description": "User schedule timeline blocks"
+    },
+    "/users/{userId}/settings/{settingsId}": {
+      "schema": { "$ref": "UserSettings" },
+      "description": "User configuration settings"
+    }
+  }
+}

@@ -1,0 +1,76 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net: Default Deny All
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-\\.]+$');
+    }
+
+    // Health / Connection test doc
+    match /test/{docId} {
+      allow read: if true;
+    }
+
+    // User Profile Document & Private Data
+    match /users/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow list: if false; // Forbid listing users
+      allow create, update: if isOwner(userId) && isValidId(userId);
+      allow delete: if isOwner(userId) && isValidId(userId);
+
+      // Tasks subcollection
+      match /tasks/{taskId} {
+        allow get: if isOwner(userId) && isValidId(taskId);
+        allow list: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isValidId(taskId);
+        allow delete: if isOwner(userId) && isValidId(taskId);
+      }
+
+      // Completed Tasks subcollection
+      match /completedTasks/{compTaskId} {
+        allow get: if isOwner(userId) && isValidId(compTaskId);
+        allow list: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isValidId(compTaskId);
+        allow delete: if isOwner(userId) && isValidId(compTaskId);
+      }
+
+      // Focus Sessions subcollection
+      match /focusSessions/{sessionId} {
+        allow get: if isOwner(userId) && isValidId(sessionId);
+        allow list: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isValidId(sessionId);
+        allow delete: if isOwner(userId) && isValidId(sessionId);
+      }
+
+      // Schedule Blocks subcollection
+      match /scheduleBlocks/{blockId} {
+        allow get: if isOwner(userId) && isValidId(blockId);
+        allow list: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isValidId(blockId);
+        allow delete: if isOwner(userId) && isValidId(blockId);
+      }
+
+      // Settings subcollection
+      match /settings/{settingsId} {
+        allow get: if isOwner(userId) && isValidId(settingsId);
+        allow list: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isValidId(settingsId);
+        allow delete: if isOwner(userId) && isValidId(settingsId);
+      }
+    }
+  }
+}
